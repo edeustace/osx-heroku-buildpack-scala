@@ -7,9 +7,9 @@ detect_sbt() {
      _has_projectScalaFile $ctxDir || \
      _has_hiddenSbtDir $ctxDir || \
      _has_buildPropertiesFile $ctxDir ; then
-    return 0 
+    return 0
   else
-    return 1 
+    return 1
   fi
 }
 
@@ -45,7 +45,9 @@ _has_playConfig() {
 get_supported_sbt_version() {
   local ctxDir=$1
   if _has_buildPropertiesFile $ctxDir; then
-    sbtVersionLine="$(grep -P '[ \t]*sbt\.version[ \t]*=' "${ctxDir}"/project/build.properties | sed -E -e 's/[ \t\r\n]//g')"
+
+    sbtVersionLine="$(perl -nle'print $& if m{sbt\.version}' "${ctxDir}"/project/build.properties | sed -E -e 's/[ \t\r\n]//g')"
+    #sbtVersionLine="$(grep -P '[ \t]*sbt\.version[ \t]*=' "${ctxDir}"/project/build.properties | sed -E -e 's/[ \t\r\n]//g')"
     sbtVersion=$(expr "$sbtVersionLine" : 'sbt\.version=\(0\.1[1-2]\.[0-9]\)$')
     if [ "$sbtVersion" != 0 ] ; then
       echo "$sbtVersion"
@@ -80,7 +82,7 @@ count_files() {
 
 detect_play_lang() {
   local appDir=$1/app
-  
+
   local num_scala_files=$(count_files ${appDir} '*.scala')
   local num_java_files=$(count_files ${appDir} '*.java')
 
